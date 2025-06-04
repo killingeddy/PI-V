@@ -8,6 +8,7 @@ python/venv
 
 # Arquivos de ambiente
 .env
+.joblib
 
 
 # Logs

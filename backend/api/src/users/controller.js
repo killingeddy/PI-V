@@ -6,7 +6,7 @@ const path = require("path");
 const PYTHON_EXECUTABLE_RETRAIN = "python";
 const PYTHON_TRAIN_SCRIPT_PATH = path.join(__dirname, "..", "..", "..", "train_and_save_model.py");
 
-function triggerModelRetraining() {
+async function triggerModelRetraining() {
   console.log("[Retrain Trigger] Iniciando o script de retreinamento em segundo plano...");
   console.log(`[Retrain Trigger] Script: ${PYTHON_TRAIN_SCRIPT_PATH}`);
 
@@ -104,7 +104,7 @@ const addUserPreference = async (req, res) => {
       await repository.addUserPreference(userId, artistId, defaultWeight);
     }
 
-    triggerModelRetraining(); 
+    await triggerModelRetraining(); 
 
     res.status(201).json({ message: "Preferências adicionadas e retreinamento iniciado em segundo plano." });
 
