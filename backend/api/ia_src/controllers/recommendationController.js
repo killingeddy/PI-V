@@ -1,6 +1,7 @@
 // nodejs_integration_example/src/controllers/recommendationController.js
 
 const recommendationService = require("../services/recommendationService");
+const artistRepository = require("../../src/artists/repository");
 
 /**
  * Controller para obter recomendações de artistas para um usuário.
@@ -11,6 +12,8 @@ async function getUserRecommendations(req, res) {
     try {
         // Extrai o ID do usuário dos parâmetros da rota
         const userId = parseInt(req.params.userId, 10);
+        console.log(`[Controller] ID do usuário recebido: ${userId}`);
+        
         if (isNaN(userId)) {
             return res.status(400).json({ message: "ID de usuário inválido." });
         }
@@ -29,6 +32,19 @@ async function getUserRecommendations(req, res) {
 
         // Chama o serviço para obter as recomendações
         const recommendations = await recommendationService.getRecommendations(userId, numRecommendations);
+        console.log('[Controller] Recomendações obtidas:', recommendations);
+
+        for (const recommendation of recommendations) {
+            // Busca detalhes do artista usando o repositório
+            const artistDetails = await artistRepository.getArtistById(recommendation.artistID);
+            if (artistDetails && artistDetails.rows && artistDetails.rows.length > 0) {
+                recommendation.artistDetails = artistDetails.rows[0];
+            } else {
+                console.warn(`[Controller] Artista não encontrado para ID: ${recommendation.artistID}`);
+                recommendation.artistDetails = null;
+            }
+        }
+        
 
         // Verifica se o serviço retornou uma lista vazia (pode indicar usuário sem vizinhos ou sem novos artistas)
         // O serviço já loga o motivo, aqui apenas retornamos o resultado.

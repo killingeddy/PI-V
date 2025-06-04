@@ -6,7 +6,7 @@ const path = require("path");
 // --- Configurações ---
 // Caminho para o executável do Python (ajuste se necessário)
 // Pode ser python, python3, python3.11 dependendo do seu ambiente
-const PYTHON_EXECUTABLE = "python3.11"; 
+const PYTHON_EXECUTABLE = "python"; 
 
 // Caminho para o script Python de recomendação
 // Assume que a pasta nodejs_integration_example está no mesmo nível que recommend_from_saved.py
@@ -36,8 +36,13 @@ async function getRecommendations(userId, numRecommendations = DEFAULT_N_RECOMME
             numRecommendations.toString()
         ];
 
+        console.log(`[Service] Argumentos para o script Python: ${args.join(" ")}`);
+        
+
         // Spawna o processo Python
         const pythonProcess = spawn(PYTHON_EXECUTABLE, args);
+        console.log('[Service] Processo Python iniciado com PID:', pythonProcess.pid);
+        
 
         let jsonData = "";
         let errorData = "";
