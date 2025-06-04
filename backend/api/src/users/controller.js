@@ -1,31 +1,51 @@
 const repository = require("./repository");
-const { spawn } = require("child_process");
 const bcrypt = require("bcryptjs");
+const { spawn } = require("child_process");
 const path = require("path");
 
-const PYTHON_EXECUTABLE_RETRAIN = "python";
-const PYTHON_TRAIN_SCRIPT_PATH = path.join(__dirname, "..", "..", "..", "train_and_save_model.py");
+const PYTHON_EXECUTABLE_RETRAIN = "python3";
+const PYTHON_TRAIN_SCRIPT_PATH = path.join(
+  __dirname,
+  "..",
+  "..",
+  "..",
+  "train_and_save_model.py"
+);
 
 async function triggerModelRetraining() {
-  console.log("[Retrain Trigger] Iniciando o script de retreinamento em segundo plano...");
-  console.log(`[Retrain Trigger] Script: ${PYTHON_TRAIN_SCRIPT_PATH}`);
+  console.log(
+    "[Retrain Trigger] Iniciando o script de retreinamento em segundo plano..."
+  );
+  console.log(
+    `[Retrain Trigger] Script: ${PYTHON_TRAIN_SCRIPT_PATH} com ${PYTHON_EXECUTABLE_RETRAIN}`
+  );
 
-  const pythonProcess = spawn(PYTHON_EXECUTABLE_RETRAIN, [PYTHON_TRAIN_SCRIPT_PATH], {
-    detached: true,
-    stdio: "ignore",
-  });
+  const pythonProcess = spawn(
+    PYTHON_EXECUTABLE_RETRAIN,
+    [PYTHON_TRAIN_SCRIPT_PATH],
+    {
+      detached: false,
+      stdio: "ignore",
+    }
+  );
 
-  pythonProcess.unref(); 
+  pythonProcess.unref();
 
   pythonProcess.on("error", (error) => {
-    console.error(`[Retrain Trigger] Erro ao iniciar o script de retreinamento: ${error.message}`);
+    console.error(
+      `[Retrain Trigger] Erro ao iniciar o script de retreinamento: ${error.message}`
+    );
   });
 
   pythonProcess.on("close", (code) => {
     if (code !== 0) {
-      console.error(`[Retrain Trigger] Script de retreinamento finalizou com erro (código ${code}).`);
+      console.error(
+        `[Retrain Trigger] Script de retreinamento finalizou com erro (código ${code}).`
+      );
     } else {
-      console.log("[Retrain Trigger] Script de retreinamento finalizado com sucesso (em segundo plano).");
+      console.log(
+        "[Retrain Trigger] Script de retreinamento finalizado com sucesso (em segundo plano)."
+      );
     }
   });
 }
@@ -48,8 +68,6 @@ const addNewUser = async (req, res) => {
       username,
       password: hashedPassword,
     });
-
-    // triggerModelRetraining();
 
     res.status(201).json({ id: newUser.rows[0].id });
   } catch (error) {
@@ -91,32 +109,49 @@ const addUserPreference = async (req, res) => {
   const userId = parseInt(user_id, 10);
   const defaultWeight = 260;
 
-  if (!userId || !artistsId || !Array.isArray(artistsId) || artistsId.length === 0) {
-    return res.status(400).json({ error: "Dados inválidos ou lista de artistas vazia" });
+  if (
+    !userId ||
+    !artistsId ||
+    !Array.isArray(artistsId) ||
+    artistsId.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Dados inválidos ou lista de artistas vazia" });
   }
 
   try {
     for (const artistId of artistsId) {
-      if (typeof artistId !== 'number' || artistId <= 0) {
-         console.warn(`[addUserPreference] ID de artista inválido ignorado: ${artistId}`);
-         continue;
+      if (typeof artistId !== "number" || artistId <= 0) {
+        console.warn(
+          `[addUserPreference] ID de artista inválido ignorado: ${artistId}`
+        );
+        continue;
       }
       await repository.addUserPreference(userId, artistId, defaultWeight);
     }
 
-    await triggerModelRetraining(); 
+    await triggerModelRetraining();
 
-    res.status(201).json({ message: "Preferências adicionadas e retreinamento iniciado em segundo plano." });
-
+    res
+      .status(201)
+      .json({
+        message:
+          "Preferências adicionadas e retreinamento iniciado em segundo plano.",
+      });
   } catch (error) {
     console.error("Erro ao adicionar preferências:", error);
-    if (error.code === '23503') {
-        return res.status(404).json({ error: "Usuário ou um dos artistas não encontrado." });
+    if (error.code === "23503") {
+      return res
+        .status(404)
+        .json({ error: "Usuário ou um dos artistas não encontrado." });
     }
-    if (error.code === '23505') {
-        console.warn(`[addUserPreference] Tentativa de adicionar preferência duplicada ignorada: ${error.detail}`);
+    if (error.code === "23505") {
+      console.warn(
+        `[addUserPreference] Tentativa de adicionar preferência duplicada ignorada: ${error.detail}`
+      );
     } else {
-        res.status(500).json({ error: "Erro interno ao salvar preferências." });
+      res.status(500).json({ error: "Erro interno ao salvar preferências." });
     }
   }
 };
