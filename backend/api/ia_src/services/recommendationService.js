@@ -7,7 +7,7 @@ const PYTHON_SCRIPT_PATH = path.join(
   "..",
   "..",
   "..",
-  "recommend_from_saved_v3_fixed.py"
+  "recommend_from_saved.py"
 );
 
 const DEFAULT_N_RECOMMENDATIONS = 10;
