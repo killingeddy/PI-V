@@ -13,9 +13,23 @@ const queryExec = async (dataQuery) => {
   }
 };
 
-const getAllArtists = async () => {
+const getAllArtists = async (search, limit = 10, offset = 0) => {
+  let whereClause = "";
+  if (search) {
+    whereClause = `WHERE a.name ILIKE '%${search}%'`;
+  }
   const query = {
-    text: "SELECT * FROM artists",
+    text: `SELECT
+      a.*,
+      COUNT(DISTINCT ua."userID") AS popularity
+    FROM artists a
+    LEFT JOIN user_artists ua
+	    ON ua."artistID" = a.id
+    ${whereClause}
+    GROUP BY a.id
+    ORDER BY popularity DESC
+    LIMIT $1 OFFSET $2`,
+    values: [limit, offset],
   };
 
   try {

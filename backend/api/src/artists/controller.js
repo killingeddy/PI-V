@@ -2,7 +2,12 @@ const repository = require("./repository");
 
 const getAllArtists = async (req, res) => {
   try {
-    const artists = await repository.getAllArtists();
+    const {search, limit, offset} = req.query;
+
+    let limitValue = parseInt(limit, 10) || 10;
+    let offsetValue = parseInt(offset, 10) || 0;
+
+    const artists = await repository.getAllArtists(search, limitValue, offsetValue);
     res.status(200).json(artists);
   } catch (error) {
     console.error("Error fetching artists:", error);
