@@ -148,7 +148,7 @@ def generate_recommendations(user_id, model_knn, user_item_matrix, user_id_map, 
             # *** CORREÇÃO APLICADA AQUI ***
             # Converte tipos NumPy para tipos nativos Python antes de adicionar à lista
             final_artist_id = int(artist_id) if isinstance(artist_id, (np.integer, np.int64)) else artist_id
-            final_score = float(score) if isinstance(score, (np.float_, np.float32, np.float64)) else score
+            final_score = float(score) if isinstance(score, (np.float32, np.float64)) else score
             recommendations.append({"artistID": final_artist_id, "score": final_score})
         else:
              print(f"[Warning stderr] Índice de artista {artist_idx} não encontrado no mapa index_artist_map.", file=sys.stderr)
