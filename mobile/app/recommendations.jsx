@@ -131,7 +131,7 @@ export default function RecommendationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fffbf3",
     justifyContent: "flex-end",
   },
   title: {
