@@ -30,3 +30,9 @@ O objetivo do Hiagu é conectar usuários à música de forma mais intuitiva e i
 ### 🗃️ Banco de Dados
 - **PostgreSQL**  
   Armazena dados de usuários, preferências musicais e histórico de interações de forma estruturada e segura.
+
+
+## Vídeo de Apresentação
+Clique na imagem abaixo para assistir ao vídeo de apresentação:
+
+  [![Assista ao vídeo](https://img.youtube.com/vi/7lQ-e2gY_3s/maxresdefault.jpg)](https://youtu.be/7lQ-e2gY_3s)
