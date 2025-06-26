@@ -81,7 +81,7 @@ export default function HomeScreen() {
             {artists.map((artist, index) => (
               <View key={index} style={styles.card}>
                 <Text style={[styles.bodySubtitle]}>#{index + 1}</Text>
-                <Text style={{ color: "#accbde", fontWeight: "bold" }}>
+                <Text style={{ color: "#0a6d4f", fontWeight: "bold" }}>
                   {artist.name}
                 </Text>
               </View>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   bodySubtitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#accbde",
+    color: "#0a6d4f",
     zIndex: 1,
     maxWidth: "70%",
     textShadowColor: "#e9edc9",
